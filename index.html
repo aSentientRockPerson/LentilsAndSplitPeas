@@ -41,8 +41,7 @@
     var offsetTop = 30;
     var offsetLeft = 30;
 
-    var remainingBricks = 1
-    const brickPiler = (piled, inHand) => piled + inHand;
+    var remainingBricks = 1 ///<placeholder for win condition///
     var bricks = [];
     for(var c=0; c<columns; c++) {
         bricks[c] = [];
@@ -50,7 +49,6 @@
             bricks[c][r] = {x: 0, y: 0, status: 1};
         }
     }
-    
 
     //user paddle constants
     var paddleWidth = 75;
@@ -85,6 +83,19 @@
     }
 
     //game logic
+
+    function brickPile() {
+        for(var c=0; c<columns; c++){
+            for(var r=0; r<rows; r++){
+                if(bricks.status == 1){
+                    remainingBricks++;
+                }
+            }
+        }
+        console.log(remainingBricks);
+    }
+    brickPile();
+
     function collision() {
         for(var c=0; c<columns; c++) {
             for(var r=0; r<rows; r++) {
@@ -94,9 +105,15 @@
                         if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
                             upDown = -upDown;
                             b.status = 0;
+                            ///win condition///remainingBricks--;
+                            console.log(remainingBricks)
                         }
                     }
-                }   
+                } else {
+                    alert("YOU WIN");
+                    document.location.reload();
+                    clearInterval(interval);
+                }  
             }
         }
     }
@@ -143,11 +160,14 @@
 
         //wipe between frames
         ctx.clearRect(0 ,0, canvas.width, canvas.height);
+        ///win condition///remainingBricks = 1
 
+        ///win condition///brickPile();
         drawBall();
         drawBricks();
         drawPaddle();
         collision();
+
 
         //the ball's movement
 
