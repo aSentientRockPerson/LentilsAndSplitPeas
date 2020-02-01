@@ -13,41 +13,34 @@
 <canvas id="myCanvas" width="480" height="320"></canvas>
 
 <script> {
+
     //make a canvas
     var canvas = document.getElementById("myCanvas");
     var ctx =  canvas.getContext("2d");
 
-    //frame rate
-    var frameRate = 15;
-
-    //ball stuff
+    //ball constants
     var ballRadius = 10;
     var squash = (3/4);
-
     //ball starting position
     var x = canvas.width/2;
     var y = canvas.height-30;
-
     //ball movement
-    var dx = 2;
-    var dy = -2;
+    var dx = 0;
+    var dy = -5;
+    var updown = 1
 
-    //user paddle
+
+    //user paddle constants
     var paddleWidth = 75;
     var paddleHeight = 10;
     var paddleX = ((canvas.width - paddleWidth) / 2);
-
-    //user input
+    //user input variables
     var rightPressed = false
     var leftPressed = false
-
-    //framerate || gamespeed
-    setInterval(draw, frameRate);
-
-    //input listener
+    //user input listener
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
-
+    //user input logic
     function keyDownHandler(e) {
         if(e.key == "Right" || e.key == "ArrowRight") {
             rightPressed = true;
@@ -69,25 +62,23 @@
         }
     }
 
+    //how to draw the elements
     function drawBall() {
-
-        //the ball
         ctx.beginPath();
         ctx.arc(x, y, ballRadius, 0, Math.PI*2);
         ctx.fillStyle = "#0095DD";
         ctx.fill();
         ctx.closePath();
-        
     }
-
     function drawPaddle() {
         ctx.beginPath();
-        ctx.rect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight);
+        ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
         ctx.fillStyle = "#FF0000";
         ctx.fill();
         ctx.closePath();
-
     }
+
+//====Draw all of the components together
 
     function draw() {
 
@@ -99,16 +90,30 @@
 
         //the ball's movement
 
-        if((y + dy < ballRadius * squash) ||
-            (y + dy > canvas.height - (ballRadius * squash))){
-            dy = -dy;
-        }
+            //bounce off the ceiling
+        if(y + dy < ballRadius * squash){
+            updown = -updown;
+            console.log(`dy ${dy}
+            y ${y}`)
+            //and bounce off the paddle but not the floor
+        } else if(y + dy > canvas.height - 10) {
+            if(x > paddleX - 4 && x < paddleX + paddleWidth + 4){
+                updown = -updown;
+            //otherwise game over
+            } else {
+                alert("GAME OVER");
+                document.location.reload();
+                clearInterval(interval);
+            }
+        }   //bounce off the walls
         if((x + dx < ballRadius * squash) ||
             (x + dx > canvas.width - (ballRadius * squash))){
             dx = -dx;
         }
         x += dx;
         y += dy;
+        //velocity at height y
+        dy = (updown*((y / canvas.height)+ 0.3) * 7)
 
         //the paddle's movement
         if (leftPressed){
@@ -124,6 +129,10 @@
             }
         } 
     }
+
+    //framerate || gamespeed
+    var frameRate = 15;
+    var interval = setInterval(draw, frameRate);
 }
 </script>
 
