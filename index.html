@@ -112,18 +112,18 @@
         y += dy;
 
         //the paddle's movement
-        if (rightPressed = true) {
-            paddleX += 7;
-            if (paddleX + paddleWidth > canvas.width){
-                paddleX = canvas.Width - (paddleWidth/2);
-            }
-        }
-        else if (leftPressed = true){
+        if (leftPressed){
             paddleX -= 7;
             if (paddleX < 0){
                 paddleX = 0;
-            }
+            } 
         }
+        else if (rightPressed) {
+            paddleX += 7;
+            if (paddleX + paddleWidth > canvas.width){
+                paddleX = canvas.width - paddleWidth;
+            }
+        } 
     }
 }
 </script>
