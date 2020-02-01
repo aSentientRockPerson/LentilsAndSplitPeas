@@ -12,25 +12,64 @@
 
 <canvas id="myCanvas" width="480" height="320"></canvas>
 
-<script>
+<script> {
+    //make a canvas
     var canvas = document.getElementById("myCanvas");
     var ctx =  canvas.getContext("2d");
 
-        //ball stuff
-        var ballRadius = 10;
+    //frame rate
+    var frameRate = 15;
 
-        //ball starting position
-        var x = canvas.width/2;
-        var y = canvas.height-30;
+    //ball stuff
+    var ballRadius = 10;
+    var squash = (3/4);
 
-        //ball movement
-        var dx = 2;
-        var dy = -2;
+    //ball starting position
+    var x = canvas.width/2;
+    var y = canvas.height-30;
 
-    function draw() {
+    //ball movement
+    var dx = 2;
+    var dy = -2;
 
-        //wipe between frames
-        ctx.clearRect(0 ,0, canvas.width, canvas.height);
+    //user paddle
+    var paddleWidth = 75;
+    var paddleHeight = 10;
+    var paddleX = ((canvas.width - paddleWidth) / 2);
+
+    //user input
+    var rightPressed = false
+    var leftPressed = false
+
+    //framerate || gamespeed
+    setInterval(draw, frameRate);
+
+    //input listener
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+    function keyDownHandler(e) {
+        if(e.key == "Right" || e.key == "ArrowRight") {
+            rightPressed = true;
+            console.log("right pressed true")
+        }
+        else if (e.key == "Left" || e.key == "ArrowLeft") {
+            leftPressed = true;
+            console.log("left pressed true")
+        }
+    }
+    function keyUpHandler(e) {
+        if(e.key == "Right" || e.key == "ArrowRight") {
+            rightPressed = false;
+            console.log("right pressed false")
+        }
+        else if (e.key == "Left" || e.key == "ArrowLeft") {
+            leftPressed = false;
+            console.log("left pressed false")
+        }
+    }
+
+    function drawBall() {
 
         //the ball
         ctx.beginPath();
@@ -39,17 +78,53 @@
         ctx.fill();
         ctx.closePath();
         
+    }
+
+    function drawPaddle() {
+        ctx.beginPath();
+        ctx.rect(paddleX, canvas.height - paddleHeight - 5, paddleWidth, paddleHeight);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+
+    }
+
+    function draw() {
+
+        //wipe between frames
+        ctx.clearRect(0 ,0, canvas.width, canvas.height);
+
+        drawPaddle();
+        drawBall();
+
+
         //the ball's movement
+
+        if((y + dy < ballRadius * squash) ||
+            (y + dy > canvas.height - (ballRadius * squash))){
+            dy = -dy;
+        }
+        if((x + dx < ballRadius * squash) ||
+            (x + dx > canvas.width - (ballRadius * squash))){
+            dx = -dx;
+        }
         x += dx;
         y += dy;
 
-        if((y + dy < 0) || (y + dy > canvas.height)){
-            dy = -dy;
-        if((x + dx < 0) || (x + dx > canvas.height)){
-            dx = -dx;
+        //the paddle's movement
+        if (rightPressed = true) {
+            paddleX += 7;
+            if (paddleX + paddleWidth > canvas.width){
+                paddleX = canvas.Width - (paddleWidth/2);
+            }
+        }
+        else if (leftPressed = true){
+            paddleX -= 7;
+            if (paddleX < 0){
+                paddleX = 0;
+            }
         }
     }
-    setInterval(draw, 10)
 }
 </script>
 
