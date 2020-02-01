@@ -20,7 +20,7 @@
 
     //ball constants
     var ballRadius = 10;
-    var squash = (3/4);
+    var squash = (3/5);
     //ball starting position
     var x = canvas.width/2;
     var y = canvas.height-30;
@@ -94,13 +94,12 @@
             //bounce off the ceiling
         if(y + dy < ballRadius * squash){
             upDown = -upDown;
-            console.log(`dy ${dy}
-            y ${y}`)
+            console.log(upDown)
             //and bounce off the paddle but not the floor
         } else if(y + dy > canvas.height - 10) {
-            if(x > paddleX - 4 && x < paddleX + paddleWidth + 4){
+            if(x > paddleX - 6 && x < paddleX + paddleWidth + 6){
                 upDown = -upDown;
-                hitAngle = ((2 * (paddleX - x + (paddleWidth / 2))) / paddleWidth);
+                hitAngle = ((2 /*<-- curvature of paddle. higher means more curved*/ * (paddleX - x + (paddleWidth / 2))) / paddleWidth);
                 dx = dx - hitAngle
             //otherwise game over
             } else {
@@ -113,11 +112,12 @@
             (x + dx > canvas.width - (ballRadius * squash))){
             dx = -dx;
         }
+        //velocity at height y
+        dy = (upDown*((y / canvas.height)+ 0.2) * 10)
         //change in position
         x += dx;
         y += dy;
-        //velocity at height y
-        dy = (upDown*((y / canvas.height)+ 0.3) * 7)
+
 
         //the paddle's movement
         if (leftPressed){
