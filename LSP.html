@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Lentils and Split Peas</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="500" height="500"></canvas>
+
+<script> {
+
+    //make a canvas
+    var canvas = document.getElementById("myCanvas");
+    var ctx =  canvas.getContext("2d");
+
+    //-//board
+    //-//grid (25px by 25px squares)
+        //-//make an array for the box centers
+        //-//off set the lines from those box centers and draw them
+    var columns;
+    var rows;
+    var board = []
+    for(var c=0; c<columns; c++) {
+        board[c] = [];
+        for(var r=0; r<rows; r++) {
+            board[c][r] = {x: 0, y: 0, status: 1};
+        }
+    }
+//=============================================//
+//key
+//-//<-- necessaray for minimum viable product
+//.  <-- "nice to have"s
+//=============================================//
+    //-//starting locations
+        //-//spawner (at first can spawn in front every turn)
+        //-//spawner dies if central diamond shape is broken by bomber
+        //-//spawner dies if completely surrounded
+                //.spawner lights up green in the middle
+                //.green part works as a button
+                //.button attaches a new guy of your color to your mouse
+                //.having a guy attached shows a spawn radius
+                //.clicking in the radius assigns the new guy to the closest unoccupied box
+    //-//troops
+        //-//red and blue
+        //-//select and move them by dragging
+        //-//3~5 moves per turn
+        //-//cannot occupy the same space
+        //-//if one group surrounds an enemy group on 4 sides, the surrounded one dies
+        //-//single troops can suicide bomb
+                //.assign locked in formations by shift+click then "lock"
+                //.be able to break formations by click "unlock"
+                //.create formation troop separation limits
+                //.create formation attributes
+                //.formations move together but have reduced speed, 
+                        //which makes them faster than if the single units moved individually
+                //.formations can push and warp the shape of enemy units/formations
+                        //at a hight cost to movement
+                //.create "create spawnpoint" option for diamond formation
+                //.create "create fortification" option for any formation with gaps =< 1,
+                        //which prevents movement but bridges gaps
+                //.single units can move diagonally
+                //.troops can be stationed on friendly fortifications
+                //.troops can not suicide bomb manned fortifications
+            //.HUD
+                //.who's turn
+                //.number of moves left
+            //.online multiplayer
+
+
+
+
+
+    //draw the things
+    function draw() {
+
+        //wipe between frames
+        ctx.clearRect(0 ,0, canvas.width, canvas.height);
+
+        //draw a grid
+
+
+
+
+    }
+
+}
+</script>
+
+</body>
+</html>
