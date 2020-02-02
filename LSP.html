@@ -19,9 +19,10 @@
     var ctx =  canvas.getContext("2d");
 
     //board dimensions
-    var boxSize = 25;
-    var boardHeight = 500;
-    var boardWidth = 500;
+    var bs = 25; //box size
+    var bh = 500; //board height
+    var bw = 500; //board width
+    var p = 0.5 //padding
     var columns = 5;
     var rows = 5;
     var gridX = 0;
@@ -42,16 +43,28 @@
         ctx.closePath();
     }
     function drawGrid(){
-        for (var x = 0; x <= boardWidth; x+= boxSize) {
+        for (var x = p; x <= bw+p; x+= bs) {
             ctx.beginPath();
             ctx.moveTo(x,0);
-            ctx.lineTo(x, boardHeight);
+            var every5th = (x % (bs*5)-p)
+            if (every5th == 0){
+                ctx.lineWidth = 2
+            } else {
+                ctx.lineWidth = 1
+            }
+            ctx.lineTo(x, bh);
             ctx.stroke();
         }
-        for (var y = 0; y <= boardHeight; y+= boxSize) {
+        for (var y = p; y <= bh+p; y+= bs) {
             ctx.beginPath();
             ctx.moveTo(0,y);
-            ctx.lineTo(boardWidth, y);
+            var every5th = (y % (bs*5)-p)
+            if (every5th == 0){
+                ctx.lineWidth = 2
+            } else {
+                ctx.lineWidth = 1
+            }
+            ctx.lineTo(bw, y);
             ctx.stroke();
         }
     }
@@ -59,7 +72,7 @@
     function drawGrid(){
         ctx.beginPath();
         ctx.moveTo(0, 25);
-        ctx.lineTo(boardWidth, 25);
+        ctx.lineTo(bw, 25);
         ctx.lineWidth = 1
         ctx.strokeStyle = "black";
         ctx.stroke();
@@ -70,13 +83,13 @@
         for(var c=0; c<columns; c++) {
             for(var r=0; r<rows; r++){
                 
-                var gridX = (c*(boxSize));
-                var gridY = (r*(boxSize));
+                var gridX = (c*(bs));
+                var gridY = (r*(bs));
                 grid[c][r].x = gridX;
                 grid[c][r].y = gridY;
                 ctx.beginPath();
                 ctx.moveTo(gridX, gridY);
-                ctx.lineTo(boardWidth, gridY);
+                ctx.lineTo(bw, gridY);
                 ctx.strokeStyle = "black";
                 ctx.stroke();
                 
@@ -90,26 +103,26 @@
             if (c=0) {
                 for(var r=0; r<rows; r++){
                     
-                    var gridX = (c*(boxSize));
-                    var gridY = (r*(boxSize));
+                    var gridX = (c*(bs));
+                    var gridY = (r*(bs));
                     grid[c][r].x = gridX;
                     grid[c][r].y = gridY;
                     ctx.beginPath();
                     ctx.moveTo(gridX, gridY);
-                    ctx.lineTo(boardWidth, gridY);
+                    ctx.lineTo(bw, gridY);
                     ctx.strokeStyle = "black";
                     ctx.stroke();
                     
                 }
             } else {
 
-                    var gridX = (c*(boxSize));
-                    var gridY = (r*(boxSize));
+                    var gridX = (c*(bs));
+                    var gridY = (r*(bs));
                     grid[c][r].x = gridX;
                     grid[c][r].y = gridY;
                     ctx.beginPath();
                     ctx.moveTo(gridX, gridY);
-                    ctx.lineTo(gridX, boardHeight);
+                    ctx.lineTo(gridX, bh);
                     ctx.strokeStyle = "black";
                     ctx.stroke();
             }
@@ -155,6 +168,8 @@
                 //.who's turn
                 //.number of moves left
             //.online multiplayer
+            //.optimization
+                //.update only on user input
 
 
 
@@ -173,7 +188,7 @@
     
 
     //framerate || gamespeed
-    var frameRate = 100;
+    var frameRate = 1000;
     var interval = setInterval(draw, frameRate);
 }
 </script>
