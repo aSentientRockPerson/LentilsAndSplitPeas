@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Lentils and Split Peas</title>
+    <title>grid testing 2</title>
     <style>
     	* { padding: 0; margin: 0; }
     	canvas { background: #eee; display: block; margin: 0 auto; }
@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<canvas id="myCanvas" width="500" height="500"></canvas>
+<canvas id="myCanvas" width="550" height="550"></canvas>
 
 <script> {
 
@@ -18,19 +18,104 @@
     var canvas = document.getElementById("myCanvas");
     var ctx =  canvas.getContext("2d");
 
-    //-//board
-    //-//grid (25px by 25px squares)
-        //-//make an array for the box centers
-        //-//off set the lines from those box centers and draw them
-    var columns;
-    var rows;
-    var board = []
+    //board dimensions
+    var boxSize = 25;
+    var boardHeight = 500;
+    var boardWidth = 500;
+    var columns = 5;
+    var rows = 5;
+    var gridX = 0;
+    var gridY = 0;
+    var grid = [];
     for(var c=0; c<columns; c++) {
-        board[c] = [];
+        grid[c] = [];
         for(var r=0; r<rows; r++) {
-            board[c][r] = {x: 0, y: 0, status: 1};
+            grid[c][r] = {x: 0, y: 0, status: 0};
         }
     }
+
+    function drawBall() {
+        ctx.beginPath();
+        ctx.arc(50, 50, 10, 0, Math.PI*2);
+        ctx.fillStyle = "#0095DD";
+        ctx.fill();
+        ctx.closePath();
+    }
+    function drawGrid(){
+        for (var x = 0; x <= boardWidth; x+= boxSize) {
+            ctx.beginPath();
+            ctx.moveTo(x,0);
+            ctx.lineTo(x, boardHeight);
+            ctx.stroke();
+        }
+        for (var y = 0; y <= boardHeight; y+= boxSize) {
+            ctx.beginPath();
+            ctx.moveTo(0,y);
+            ctx.lineTo(boardWidth, y);
+            ctx.stroke();
+        }
+    }
+    /*
+    function drawGrid(){
+        ctx.beginPath();
+        ctx.moveTo(0, 25);
+        ctx.lineTo(boardWidth, 25);
+        ctx.lineWidth = 1
+        ctx.strokeStyle = "black";
+        ctx.stroke();
+    }
+    */
+    /*
+    function drawGrid(){
+        for(var c=0; c<columns; c++) {
+            for(var r=0; r<rows; r++){
+                
+                var gridX = (c*(boxSize));
+                var gridY = (r*(boxSize));
+                grid[c][r].x = gridX;
+                grid[c][r].y = gridY;
+                ctx.beginPath();
+                ctx.moveTo(gridX, gridY);
+                ctx.lineTo(boardWidth, gridY);
+                ctx.strokeStyle = "black";
+                ctx.stroke();
+                
+            }
+        }
+    }
+*/
+/*
+    function drawGrid(){
+        for(var c=0; c<columns; c++) {
+            if (c=0) {
+                for(var r=0; r<rows; r++){
+                    
+                    var gridX = (c*(boxSize));
+                    var gridY = (r*(boxSize));
+                    grid[c][r].x = gridX;
+                    grid[c][r].y = gridY;
+                    ctx.beginPath();
+                    ctx.moveTo(gridX, gridY);
+                    ctx.lineTo(boardWidth, gridY);
+                    ctx.strokeStyle = "black";
+                    ctx.stroke();
+                    
+                }
+            } else {
+
+                    var gridX = (c*(boxSize));
+                    var gridY = (r*(boxSize));
+                    grid[c][r].x = gridX;
+                    grid[c][r].y = gridY;
+                    ctx.beginPath();
+                    ctx.moveTo(gridX, gridY);
+                    ctx.lineTo(gridX, boardHeight);
+                    ctx.strokeStyle = "black";
+                    ctx.stroke();
+            }
+        }
+    }
+*/
 //=============================================//
 //key
 //-//<-- necessaray for minimum viable product
@@ -74,20 +159,22 @@
 
 
 
+//====Draw all of the components together
 
-    //draw the things
     function draw() {
 
         //wipe between frames
         ctx.clearRect(0 ,0, canvas.width, canvas.height);
 
-        //draw a grid
-
-
-
+        drawGrid();
+        drawBall();
 
     }
+    
 
+    //framerate || gamespeed
+    var frameRate = 100;
+    var interval = setInterval(draw, frameRate);
 }
 </script>
 
