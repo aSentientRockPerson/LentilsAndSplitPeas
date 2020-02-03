@@ -14,6 +14,10 @@
 
 <script> {
 
+//=======================================================
+    //important constants
+//=======================================================
+
     //make a canvas
     var canvas = document.getElementById("myCanvas");
     var ctx =  canvas.getContext("2d");
@@ -35,7 +39,44 @@
         }
     }
 
+
+    //default spawn points
+    ug[7][17].status = "spawnB";
+    ug[12][2].status = "spawnR";
+
+
+//========================================================
+    //User Interface
+//========================================================
+
+    //listeners
+    document.addEventListener("mousemove", drawDrag, false)
+    var mouseDn = false;
+    var selectStatus = "empty";
+    document.addEventListener("mousedown", mDown, false);
+    document.addEventListener("mouseup", mUp, false);
+    function mDown(e) {
+        mouseDn = true;
+        var mouseC = Math.floor((e.layerX-p)/25);
+        var mouseR = Math.floor((e.layerY-p)/25);
+        console.log(ug[mouseC][mouseR].status);
+        selectStatus = (ug[mouseC][mouseR].status);
+        ug[mouseC][mouseR].status = "empty";
+
+    } 
+    function mUp(e) {
+        mouseDn = false;
+        var mouseC = Math.floor((e.layerX-p)/25);
+        var mouseR = Math.floor((e.layerY-p)/25);
+        ug[mouseC][mouseR].status = selectStatus;
+        selectStatus = "empty"
+    }
+
+
+
+//=====================================================
     //how to draw the stuff
+//=====================================================
 
     function drawGrid(){
         for (var x = p; x <= bw+p; x+= bs) {
@@ -76,14 +117,22 @@
         ctx.fillStyle = "green";
         ctx.fill();
         ctx.closePath();
-        /*
-
-        */
+    }
+    function spawnPointWalls(c,r,color) {
+        ug[c][r+1].status = color;
+        ug[c][r-1].status = color;
+        ug[c+1][r].status = color;
+        ug[c-1][r].status = color;
+    }
+    function drawDrag(e) {
+        if (mouseDn) {
+            drawBall(e.layerX, e.layerY, selectStatus);
+        }
     }
 
-
-    ug[7][17].status = "spawnB";
-    ug[13][3].status = "spawnR";
+//=======================================================
+    //draw stuff together
+//=======================================================
 
     function drawUnits() {
         for(var c=0; c<columns; c++) {
@@ -92,40 +141,51 @@
                 var gridY = ((r*bs) + p +(bs/2));
                 ug[c][r].x = gridX;
                 ug[c][r].y = gridY;
-                if (ug[c][r].status === "spawnB") {
-                    var color = "blue"
-                    drawSpawn(gridX, gridY)
-                    ug[c][r+1].status = color;
-                    ug[c][r-1].status = color;
-                    ug[c+1][r].status = color;
-                    ug[c-1][r].status = color;
-                } else if (ug[c][r].status === "blue"){
-                    drawBall(gridX, gridY, "blue");
-                } else if (ug[c][r].status === "red") {
-                    drawBall(gridX, gridY, "red");
-                } else {
-                    ctx.beginPath();
-                    ctx.rect(gridX,gridY,1,1);
-                    ctx.fillStyle = "black"
-                    ctx.fill();
-                    ctx.closePath;
+
+                switch (ug[c][r].status) {
+                    case "spawnB":
+                        var color = "blue"
+                        drawSpawn(gridX, gridY);
+                        spawnPointWalls(c,r,color);
+                        break;
+                    case "spawnR": 
+                        var color = "red"
+                        drawSpawn(gridX, gridY);
+                        spawnPointWalls(c,r,color);
+                        break;
+                    case "blue": 
+                        drawBall(gridX, gridY, "blue");
+                        break;
+                    case "red": 
+                        drawBall(gridX, gridY, "red");
+                        break;
+                    default: 
+                        ctx.beginPath();
+                        ctx.rect(gridX,gridY,1,1);
+                        ctx.fillStyle = "black"
+                        ctx.fill();
+                        ctx.closePath;
+                        break;
                 }
             }
         }
     }
-
-//=============================================//
+//=====================================================
+    //Notes
+//===================================================//
 //key
 //-//<-- necessaray for minimum viable product
 //.  <-- "nice to have"s
 //:) <-- done enough
-//=============================================//
+//===================================================//
     //-//:)game board
         //:)make a grid
                 //.make variable maps with impassable terrain
     //-//starting locations
-        //-//spawner (at first can spawn in front every turn)
+        //-//:)spawner
+        //-//spawner spawns (at first can spawn in front every turn)
         //-//spawner dies if central diamond shape is broken by bomber
+        //-//spawner repairs if diamon shape repaired
         //-//spawner dies if completely surrounded
                 //.spawner lights up green in the middle
                 //.green part works as a button
@@ -133,9 +193,13 @@
                 //.having a guy attached shows a spawn radius
                 //.clicking in the radius assigns the new guy to the closest unoccupied box
     //-//troops
-        //-//red and blue
-        //-//select and move them by dragging
+        //-//:)red and blue
+        //-//:)mouse click copies status,
+            //:)unclick pastes status and removes status from copied square.
+        //-//:)select and move them by dragging
         //-//3~5 moves per turn
+                //.movement radius shown and restricted
+        //-//have turns
         //-//cannot occupy the same space
         //-//if one group surrounds an enemy group on 4 sides, the surrounded one dies
         //-//single troops can suicide bomb
@@ -148,6 +212,7 @@
                 //.formations can push and warp the shape of enemy units/formations
                         //at a hight cost to movement
                 //.create "create spawnpoint" option for diamond formation
+                //.spawnpoint boundary, cannot be up against wall
                 //.create "create fortification" option for any formation with gaps =< 1,
                         //which prevents movement but bridges gaps
                 //.single units can move diagonally
@@ -162,8 +227,9 @@
 
 
 
-
-//====Draw all of the components together
+//======================================================
+//====Render Drawings
+//======================================================
 
     function draw() {
 
@@ -171,14 +237,13 @@
         ctx.clearRect(0 ,0, canvas.width, canvas.height);
 
         drawGrid();
-        drawBall();
         drawUnits();
 
     }
     
 
     //framerate || gamespeed
-    var frameRate = 1000;
+    var frameRate = 100;
     var interval = setInterval(draw, frameRate);
 }
 </script>
