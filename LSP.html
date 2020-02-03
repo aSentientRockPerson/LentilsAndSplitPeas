@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>grid testing 2</title>
+    <title>LSP still testing</title>
     <style>
     	* { padding: 0; margin: 0; }
     	canvas { background: #eee; display: block; margin: 0 auto; }
@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<canvas id="myCanvas" width="550" height="550"></canvas>
+<canvas id="myCanvas" width="551" height="551"></canvas>
 
 <script> {
 
@@ -23,25 +23,20 @@
     var bh = 500; //board height
     var bw = 500; //board width
     var p = 0.5 //padding
-    var columns = 5;
-    var rows = 5;
-    var gridX = 0;
-    var gridY = 0;
-    var grid = [];
-    for(var c=0; c<columns; c++) {
-        grid[c] = [];
-        for(var r=0; r<rows; r++) {
-            grid[c][r] = {x: 0, y: 0, status: 0};
+    const columns = Math.floor(bw / bs);
+    const rows = Math.floor(bh / bs);
+    var gridX = 26
+    var gridY = 26
+    var ug = [] //unit snap-to grid at box centers
+    for (var c = 0; c < columns; c++) {
+        ug[c] = [];
+        for(var r = 0; r < rows; r++) {
+            ug[c][r] = {x: 0, y: 0, status: "empty"}
         }
     }
 
-    function drawBall() {
-        ctx.beginPath();
-        ctx.arc(50, 50, 10, 0, Math.PI*2);
-        ctx.fillStyle = "#0095DD";
-        ctx.fill();
-        ctx.closePath();
-    }
+    //how to draw the stuff
+
     function drawGrid(){
         for (var x = p; x <= bw+p; x+= bs) {
             ctx.beginPath();
@@ -68,72 +63,66 @@
             ctx.stroke();
         }
     }
-    /*
-    function drawGrid(){
+    function drawBall(gridX, gridY, color) {
         ctx.beginPath();
-        ctx.moveTo(0, 25);
-        ctx.lineTo(bw, 25);
-        ctx.lineWidth = 1
-        ctx.strokeStyle = "black";
-        ctx.stroke();
+        ctx.arc(gridX, gridY, 10, 0, Math.PI*2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.closePath();
     }
-    */
-    /*
-    function drawGrid(){
-        for(var c=0; c<columns; c++) {
-            for(var r=0; r<rows; r++){
-                
-                var gridX = (c*(bs));
-                var gridY = (r*(bs));
-                grid[c][r].x = gridX;
-                grid[c][r].y = gridY;
-                ctx.beginPath();
-                ctx.moveTo(gridX, gridY);
-                ctx.lineTo(bw, gridY);
-                ctx.strokeStyle = "black";
-                ctx.stroke();
-                
-            }
-        }
-    }
-*/
-/*
-    function drawGrid(){
-        for(var c=0; c<columns; c++) {
-            if (c=0) {
-                for(var r=0; r<rows; r++){
-                    
-                    var gridX = (c*(bs));
-                    var gridY = (r*(bs));
-                    grid[c][r].x = gridX;
-                    grid[c][r].y = gridY;
-                    ctx.beginPath();
-                    ctx.moveTo(gridX, gridY);
-                    ctx.lineTo(bw, gridY);
-                    ctx.strokeStyle = "black";
-                    ctx.stroke();
-                    
-                }
-            } else {
+    function drawSpawn(gridX, gridY) {
+        ctx.beginPath();
+        ctx.rect(gridX - bs/2, gridY - bs/2, bs-p, bs-p);
+        ctx.fillStyle = "green";
+        ctx.fill();
+        ctx.closePath();
+        /*
 
-                    var gridX = (c*(bs));
-                    var gridY = (r*(bs));
-                    grid[c][r].x = gridX;
-                    grid[c][r].y = gridY;
+        */
+    }
+
+
+    ug[7][17].status = "spawnB";
+    ug[13][3].status = "spawnR";
+
+    function drawUnits() {
+        for(var c=0; c<columns; c++) {
+            for(var r=0; r<rows; r++) {
+                var gridX = ((c*bs) + p +(bs/2));
+                var gridY = ((r*bs) + p +(bs/2));
+                ug[c][r].x = gridX;
+                ug[c][r].y = gridY;
+                if (ug[c][r].status === "spawnB") {
+                    var color = "blue"
+                    drawSpawn(gridX, gridY)
+                    ug[c][r+1].status = color;
+                    ug[c][r-1].status = color;
+                    ug[c+1][r].status = color;
+                    ug[c-1][r].status = color;
+                } else if (ug[c][r].status === "blue"){
+                    drawBall(gridX, gridY, "blue");
+                } else if (ug[c][r].status === "red") {
+                    drawBall(gridX, gridY, "red");
+                } else {
                     ctx.beginPath();
-                    ctx.moveTo(gridX, gridY);
-                    ctx.lineTo(gridX, bh);
-                    ctx.strokeStyle = "black";
-                    ctx.stroke();
+                    ctx.rect(gridX,gridY,1,1);
+                    ctx.fillStyle = "black"
+                    ctx.fill();
+                    ctx.closePath;
+                }
             }
         }
     }
-*/
+
 //=============================================//
 //key
 //-//<-- necessaray for minimum viable product
 //.  <-- "nice to have"s
+//:) <-- done enough
 //=============================================//
+    //-//:)game board
+        //:)make a grid
+                //.make variable maps with impassable terrain
     //-//starting locations
         //-//spawner (at first can spawn in front every turn)
         //-//spawner dies if central diamond shape is broken by bomber
@@ -183,6 +172,7 @@
 
         drawGrid();
         drawBall();
+        drawUnits();
 
     }
     
