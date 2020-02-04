@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<canvas id="myCanvas" width="551" height="551"></canvas>
+<canvas id="myCanvas" width="651" height="501"></canvas>
 
 <script> {
 
@@ -39,6 +39,10 @@
         }
     }
 
+    //turn order
+    var turn = "blue"
+    var canSpawn = true
+    var movesLeft = 5
 
     //default spawn points
     ug[7][17].status = "spawnB";
@@ -56,12 +60,13 @@
     document.addEventListener("mousedown", mDown, false);
     document.addEventListener("mouseup", mUp, false);
     function mDown(e) {
-        mouseDn = true;
         var mouseC = Math.floor((e.layerX-p)/25);
         var mouseR = Math.floor((e.layerY-p)/25);
-        console.log(ug[mouseC][mouseR].status);
-        selectStatus = (ug[mouseC][mouseR].status);
-        ug[mouseC][mouseR].status = "empty";
+        if (ug[mouseC][mouseR].status == turn) {
+            mouseDn = true;
+            selectStatus = (ug[mouseC][mouseR].status);
+            ug[mouseC][mouseR].status = "empty";
+        }
 
     } 
     function mUp(e) {
@@ -111,10 +116,10 @@
         ctx.fill();
         ctx.closePath();
     }
-    function drawSpawn(gridX, gridY) {
+    function drawSpawn(gridX, gridY, onOff) {
         ctx.beginPath();
         ctx.rect(gridX - bs/2, gridY - bs/2, bs-p, bs-p);
-        ctx.fillStyle = "green";
+        ctx.fillStyle = onOff;
         ctx.fill();
         ctx.closePath();
     }
@@ -128,6 +133,21 @@
         if (mouseDn) {
             drawBall(e.layerX, e.layerY, selectStatus);
         }
+    }
+    function drawHud() {
+        var hudX = bw+10;
+        var hudY = 10;
+        ctx.beginPath();
+        ctx.rect(hudX, hudY, 130, 100);
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "black"
+        ctx.fillText ("Turn: "+turn,hudX+10,hudY+20)
+        ctx.fillText ("Can Spawn: "+canSpawn,hudX+10,hudY+40)
+        ctx.fillText ("Moves left: "+movesLeft,hudX+10,hudY+60)
     }
 
 //=======================================================
@@ -145,12 +165,22 @@
                 switch (ug[c][r].status) {
                     case "spawnB":
                         var color = "blue"
-                        drawSpawn(gridX, gridY);
+                        if (turn == "blue" && canSpawn == true){
+                            onOff = "green"
+                        } else {
+                            onOff = "black"
+                        }
+                        drawSpawn(gridX, gridY, onOff);
                         spawnPointWalls(c,r,color);
                         break;
                     case "spawnR": 
                         var color = "red"
-                        drawSpawn(gridX, gridY);
+                        if (turn == "red" && canSpawn == true){
+                            onOff = "green"
+                        } else {
+                            onOff = "black"
+                        }
+                        drawSpawn(gridX, gridY, onOff);
                         spawnPointWalls(c,r,color);
                         break;
                     case "blue": 
@@ -196,6 +226,7 @@
         //-//:)red and blue
         //-//:)mouse click copies status,
             //:)unclick pastes status and removes status from copied square.
+            //.finger touches do the same thing
         //-//:)select and move them by dragging
         //-//3~5 moves per turn
                 //.movement radius shown and restricted
@@ -203,6 +234,7 @@
         //-//cannot occupy the same space
         //-//if one group surrounds an enemy group on 4 sides, the surrounded one dies
         //-//single troops can suicide bomb
+                //.(formation alternative would be pulling adjacent units in a line)
                 //.assign locked in formations by shift+click then "lock"
                 //.be able to break formations by click "unlock"
                 //.create formation troop separation limits
@@ -218,9 +250,9 @@
                 //.single units can move diagonally
                 //.troops can be stationed on friendly fortifications
                 //.troops can not suicide bomb manned fortifications
-            //.HUD
-                //.who's turn
-                //.number of moves left
+            //:)HUD
+                //:)who's turn
+                //:)number of moves left
             //.online multiplayer
             //.optimization
                 //.update only on user input
@@ -238,6 +270,7 @@
 
         drawGrid();
         drawUnits();
+        drawHud();
 
     }
     
