@@ -62,6 +62,10 @@
     function mDown(e) {
         var mouseC = Math.floor((e.layerX-p)/25);
         var mouseR = Math.floor((e.layerY-p)/25);
+        //-//find a way to store mouseC and mouseR to check if 
+        //-//where the player wants to drop their unit is a valid location,
+        //-//or if it is the same location they picked it up from, 
+        //-//to drop it and give them their move back
         if (ug[mouseC][mouseR].status == turn) {
             mouseDn = true;
             selectStatus = (ug[mouseC][mouseR].status);
@@ -229,8 +233,12 @@
             //.finger touches do the same thing
         //-//:)select and move them by dragging
         //-//3~5 moves per turn
+        //-//put pieces back and restore move token (create move token;)
+            //(if viable location, place piece and subtract movetoken from movecounter;)
+            //(if same location as picked up from, or other non-viable location, set movetoken to 0 and empty selection)
                 //.movement radius shown and restricted
-        //-//have turns
+        //-//:)have turns
+        //-//switch turns
         //-//cannot occupy the same space
         //-//if one group surrounds an enemy group on 4 sides, the surrounded one dies
         //-//single troops can suicide bomb
